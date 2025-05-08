@@ -1,18 +1,19 @@
 -- netlib.lua
 local netlib = {}
 
--- Function to find a peripheral by type
-local function findPeripheral(peripheralType)
-    local p = peripheral.find(peripheralType)
-    if not p then
-        error("Peripheral of type '" .. peripheralType .. "' not found.")
+-- Utility: Find a peripheral whose name contains a given substring
+local function findPeripheralByNamePattern(pattern)
+    for _, name in ipairs(peripheral.getNames()) do
+        if name:find(pattern) then
+            return peripheral.wrap(name)
+        end
     end
-    return p
+    error("Peripheral with pattern '" .. pattern .. "' not found.")
 end
 
--- Discover Source and Target peripherals
-local source = findPeripheral("create_source")
-local target = findPeripheral("create_target")
+-- Automatically discover the source and target
+local source = findPeripheralByNamePattern("create_source")
+local target = findPeripheralByNamePattern("create_target")
 
 -- Function to send data to the target display
 function netlib.SendData(data)
