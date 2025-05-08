@@ -1,0 +1,18 @@
+-- Load the networking library
+local netlib = require("netlib")
+
+-- Continuous loop to listen for incoming messages
+while true do
+    local senderID, message = netlib.GetData()
+    if senderID and message then
+        print("Received message from computer ID " .. senderID .. ": " .. message)
+        
+        -- Prepare a response message
+        local response = "Acknowledged: " .. message
+        
+        -- Send the response back to the sender
+        netlib.SendData(senderID, response)
+        
+        print("Sent response to computer ID " .. senderID .. ": " .. response)
+    end
+end
