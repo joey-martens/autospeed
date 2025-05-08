@@ -1,0 +1,13 @@
+-- Load the networking library
+local netlib = require("netlib")
+
+-- Define the target computer's ID
+local targetID = 2  -- Replace with the actual ID of the target computer
+
+-- Define the message to send
+local message = "Hello from Computer " .. os.getComputerID()
+
+-- Send the message to the target computer
+netlib.SendData(targetID, message)
+
+print("Sent message to computer ID " .. targetID .. ": " .. message)
