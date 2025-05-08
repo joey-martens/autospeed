@@ -3,11 +3,11 @@ local netlib = {}
 
 -- Function to find a peripheral by type
 local function findPeripheral(peripheralType)
-    local peripheral = peripheral.find(peripheralType)
-    if not peripheral then
+    local p = peripheral.find(peripheralType)
+    if not p then
         error("Peripheral of type '" .. peripheralType .. "' not found.")
     end
-    return peripheral
+    return p
 end
 
 -- Discover Source and Target peripherals
@@ -16,35 +16,33 @@ local target = findPeripheral("create_target")
 
 -- Function to send data to the target display
 function netlib.SendData(data)
-    -- Clear the target display
     target.clear()
 
-    -- Split the data into lines
-    local lines = {}
-    for line in data:gmatch("[^\r\n]+") do
-        table.insert(lines, line)
+    -- Convert data to string safely
+    if type(data) == "table" then
+        data = textutils.serialize(data)
+    else
+        data = tostring(data)
     end
 
-    -- Write each line to the target display
-    for i, line in ipairs(lines) do
-        target.setCursorPos(1, i)
+    -- Split string into lines and write them
+    local y = 1
+    for line in data:gmatch("[^\r\n]+") do
+        target.setCursorPos(1, y)
         target.write(line)
+        y = y + 1
     end
 end
 
--- Function to retrieve data from the source display
+-- Function to get data from the source display
 function netlib.GetData()
     local width, height = source.getSize()
-    local data = {}
-
-    -- Read each line from the source display
+    local lines = {}
     for y = 1, height do
         local line = source.getLine(y)
-        table.insert(data, line)
+        table.insert(lines, line)
     end
-
-    -- Combine lines into a single string
-    return table.concat(data, "\n")
+    return table.concat(lines, "\n")
 end
 
 return netlib
